@@ -6,7 +6,7 @@ import { calculateGst } from '../lib/gst';
 
 const rates = [3, 5, 12, 18, 28, 40];
 const defaults = { amount: 1000, rate: 18 };
-const initial = calculateGst(defaults.amount, defaults.rate, false, false);
+const initial = calculateGst(defaults.amount, defaults.rate, true, false);
 const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
 ---
 
@@ -43,10 +43,10 @@ const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' 
           <div class="field">
             <span class="label" id="mode-label">This amount</span>
             <div class="segmented" role="radiogroup" aria-labelledby="mode-label">
-              <input type="radio" name="mode" id="mode-exclusive" value="exclusive" checked />
-              <label for="mode-exclusive">Excludes GST (add GST)</label>
-              <input type="radio" name="mode" id="mode-inclusive" value="inclusive" />
+              <input type="radio" name="mode" id="mode-inclusive" value="inclusive" checked />
               <label for="mode-inclusive">Includes GST (remove GST)</label>
+              <input type="radio" name="mode" id="mode-exclusive" value="exclusive" />
+              <label for="mode-exclusive">Excludes GST (add GST)</label>
             </div>
           </div>
 
