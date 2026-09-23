@@ -1,0 +1,412 @@
+---
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import Icon from '../components/Icon.astro';
+import { site, installUrl } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { title, description = site.description, image = '/og-image.png', jsonLd } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL(image, site.url).href;
+const year = new Date().getFullYear();
+
+const nav = [
+  { href: '/#features', label: 'Features' },
+  { href: '/#pricing', label: 'Pricing' },
+  { href: '/#reviews', label: 'Reviews' },
+  { href: '/#faq', label: 'FAQ' },
+  { href: '/gst-calculator/', label: 'GST Calculator' },
+  { href: '/gstin-checker/', label: 'GSTIN Checker' },
+];
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#5b4fe6" />
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand" aria-label="GST Invoices India home">
+          <Logo />
+        </a>
+
+        <nav class="nav-desktop" aria-label="Main">
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        </nav>
+
+        <div class="header-actions">
+          <a class="btn btn-primary btn-sm" href={installUrl('header')} target="_blank" rel="noopener">
+            Install free
+          </a>
+          <details class="nav-mobile">
+            <summary aria-label="Open menu">
+              <Icon name="menu" size={22} class="icon-open" />
+              <Icon name="close" size={22} class="icon-close" />
+            </summary>
+            <nav class="nav-mobile-panel" aria-label="Mobile">
+              {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <Logo />
+            <p>
+              GST-compliant invoices, credit notes and GSTR-1 reports for Indian Shopify stores. Built by <a
+                href={site.company.url}
+                target="_blank"
+                rel="noopener">{site.company.name}</a
+              > in {site.company.location.split(',')[0]}, India.
+            </p>
+            <a class="btn btn-primary btn-sm" href={installUrl('footer')} target="_blank" rel="noopener">
+              Install on Shopify <Icon name="arrow" />
+            </a>
+          </div>
+
+          <div>
+            <h2 class="footer-title">Product</h2>
+            <ul>
+              <li><a href="/#features">Features</a></li>
+              <li><a href="/#pricing">Pricing</a></li>
+              <li><a href="/#reviews">Reviews</a></li>
+              <li><a href="/#faq">FAQ</a></li>
+              <li><a href={site.appStoreUrl} target="_blank" rel="noopener">Shopify App Store</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="footer-title">Free tools</h2>
+            <ul>
+              <li><a href="/gst-calculator/">GST Calculator</a></li>
+              <li><a href="/gstin-checker/">GSTIN Checker</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="footer-title">Support</h2>
+            <ul>
+              <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+              {
+                site.whatsapp && (
+                  <li>
+                    <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">
+                      WhatsApp
+                    </a>
+                  </li>
+                )
+              }
+              <li><a href="/privacy/">Privacy policy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© {year} {site.company.name}. All rights reserved.</p>
+          <p class="made-in"><span class="flag" aria-hidden="true"><span></span><span></span><span></span></span> Made in India</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Close the mobile menu after choosing a link (anchor links don't reload the page).
+      const menu = document.querySelector<HTMLDetailsElement>('.nav-mobile');
+      menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.removeAttribute('open')));
+      document.addEventListener('click', (e) => {
+        if (menu?.open && !menu.contains(e.target as Node)) menu.removeAttribute('open');
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -60px;
+    z-index: 100;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 700;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.85);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid rgb(228 226 239 / 0.7);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 68px;
+  }
+
+  .brand {
+    text-decoration: none;
+    flex: none;
+  }
+
+  .nav-desktop {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav-desktop a {
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-desktop a:hover {
+    color: var(--ink);
+    background: var(--lavender);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-mobile {
+    display: none;
+    position: relative;
+  }
+
+  .nav-mobile summary {
+    list-style: none;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    cursor: pointer;
+    background: var(--surface);
+  }
+
+  .nav-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-mobile :global(.icon-close),
+  .nav-mobile[open] :global(.icon-open) {
+    display: none;
+  }
+
+  .nav-mobile[open] :global(.icon-close) {
+    display: block;
+  }
+
+  .nav-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    width: min(280px, calc(100vw - 32px));
+    padding: 8px;
+    display: grid;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .nav-mobile-panel a {
+    padding: 12px 14px;
+    border-radius: 10px;
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .nav-mobile-panel a:hover {
+    background: var(--lavender);
+  }
+
+  @media (max-width: 1080px) {
+    .nav-desktop {
+      display: none;
+    }
+    .nav-mobile {
+      display: block;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .header-inner :global(.logo-text) {
+      font-size: 0.9375rem;
+    }
+    .header-actions .btn {
+      padding-inline: 0.9em;
+    }
+  }
+
+  .site-footer {
+    background: var(--ink);
+    color: #b9b6cc;
+    padding-block: 64px 32px;
+    font-size: 0.9375rem;
+  }
+
+  .site-footer :global(.logo) {
+    color: #fff;
+  }
+
+  .site-footer :global(.logo .accent) {
+    color: #a9a1ff;
+  }
+
+  .site-footer a {
+    color: #d9d6ea;
+    text-decoration: none;
+  }
+
+  .site-footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+    max-width: 360px;
+  }
+
+  .footer-brand .btn {
+    justify-self: start;
+    color: #fff;
+  }
+
+  .footer-brand .btn:hover {
+    text-decoration: none;
+  }
+
+  .footer-title {
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a87a0;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .site-footer li {
+    overflow-wrap: anywhere;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.875rem;
+    color: #8a87a0;
+  }
+
+  .made-in {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @media (max-width: 860px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

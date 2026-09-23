@@ -1,0 +1,226 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+
+const email = site.email;
+---
+
+<Base
+  title="Privacy Policy | GST Invoices India"
+  description="How GST Invoices India by Warp Studio collects, uses and protects your store's data and your customers' data."
+>
+  <PageHero eyebrow="Legal" title="Privacy Policy">
+    <p class="meta">Last updated: November 2025 · Warp Studio · India</p>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <article class="prose">
+        <h2>Overview</h2>
+        <p>
+          This Privacy Policy describes how Warp Studio (“we”, “us”, or “our”) collects, uses, and protects information
+          when you use our Shopify application, <strong>GST Invoices India</strong>, and our website at
+          gstinvoicesindia.com (collectively, the “Services”).
+        </p>
+        <p>
+          By installing or using our app, you agree to the collection and use of information in accordance with this
+          policy. We are committed to being transparent about what we collect, why we collect it, and how it is used.
+        </p>
+        <p class="callout">
+          <strong>The short version:</strong> We collect only the minimum data required to generate GST-compliant invoices
+          for your Shopify store. We do not sell your data. We do not share it with advertisers. We never will.
+        </p>
+
+        <h2>What information we collect</h2>
+        <p>When you install and use GST Invoices India, we access the following information from your Shopify store:</p>
+        <p><strong>Shopify store data and orders</strong></p>
+        <ul>
+          <li>Order details including order number, line items, quantities, and amounts</li>
+          <li>Order tax information and applied discount codes</li>
+          <li>Shipping and billing addresses associated with each order</li>
+          <li>Your store’s name, address, and merchant GSTIN (as configured by you)</li>
+          <li>Product details including titles, SKUs, and HSN/SAC codes you assign</li>
+        </ul>
+        <p><strong>Customer names and email addresses</strong></p>
+        <ul>
+          <li>Customer full name as entered at checkout</li>
+          <li>Customer email address, used to deliver invoices</li>
+          <li>Customer GSTIN, if provided by the customer at checkout (for B2B orders)</li>
+          <li>Customer billing address for invoice generation</li>
+        </ul>
+        <p>
+          We do <strong>not</strong> collect payment card numbers, bank account details, passwords, or any other sensitive
+          financial credentials. Payment processing is handled entirely by Shopify and its payment partners.
+        </p>
+
+        <h2>How we use your data</h2>
+        <p>We use the information collected for the following purposes only:</p>
+        <ul>
+          <li>Generating GST-compliant PDF invoices for each order placed in your Shopify store</li>
+          <li>Calculating the correct GST (CGST/SGST or IGST) based on the customer’s and your business’s location</li>
+          <li>Validating customer GSTINs against the GST portal (for B2B invoicing)</li>
+          <li>Delivering invoices to your customers via email on your behalf</li>
+          <li>Storing historical invoices so you can download them for filing and accounting purposes</li>
+          <li>Generating monthly GST summary reports (e.g. GSTR-1 compatible exports)</li>
+          <li>Providing customer support when you contact us about a specific order or invoice</li>
+        </ul>
+        <p>
+          We do not use your data or your customers’ data for marketing, profiling, analytics sold to third parties, or
+          any purpose beyond the core invoicing functions described above.
+        </p>
+
+        <h2>Who we share data with</h2>
+        <p>
+          We do not sell, rent, or trade your personal information or your customers’ personal information to any third
+          party. We may share data only in the following limited circumstances:
+        </p>
+        <ul>
+          <li>
+            <strong>Service providers:</strong> We use trusted infrastructure providers (such as cloud hosting and email
+            delivery services) to operate our app. These providers are contractually bound to use data only to provide
+            services to us, and not for any other purpose.
+          </li>
+          <li>
+            <strong>Legal compliance:</strong> We may disclose data if required to do so by law, or in response to a valid
+            legal process such as a court order or government request.
+          </li>
+          <li>
+            <strong>Business transfer:</strong> In the event of a merger, acquisition, or sale of all or a portion of our
+            assets, data may be transferred as part of that transaction. We will notify you before your data is
+            transferred and becomes subject to a different privacy policy.
+          </li>
+        </ul>
+
+        <h2>How we store and protect your data</h2>
+        <p>
+          Your data is stored on secure cloud infrastructure hosted within India where possible, and otherwise in data
+          centres that comply with industry-standard security practices.
+        </p>
+        <ul>
+          <li>Access to data is restricted to authorised personnel only, on a need-to-know basis</li>
+          <li>We perform regular security reviews of our infrastructure and application code</li>
+          <li>
+            Invoice data is retained for as long as your app subscription is active, plus a period of 24 months thereafter,
+            to allow you to access historical records. You may request earlier deletion at any time by contacting us.
+          </li>
+        </ul>
+        <p>
+          If you uninstall the app, we will delete your store’s data within <strong>30 days</strong>, unless you request
+          immediate deletion, in which case we will process your request within 7 business days.
+        </p>
+
+        <h2>Your rights over your data</h2>
+        <p>
+          As a merchant using our app, and as someone whose data may be processed by our app, you have the following
+          rights:
+        </p>
+        <ul>
+          <li><strong>Access:</strong> You may request a copy of the personal data we hold about you or your customers at any time.</li>
+          <li><strong>Correction:</strong> If any information we hold is inaccurate, you may request that we correct it.</li>
+          <li>
+            <strong>Deletion:</strong> You may request that we delete your data. We will comply within 7 business days,
+            subject to any legal obligations to retain certain records.
+          </li>
+          <li><strong>Portability:</strong> You may request your invoice data in a machine-readable format (CSV or JSON).</li>
+          <li>
+            <strong>Objection:</strong> You may object to any processing of your data that you believe is not necessary for
+            the invoicing services we provide.
+          </li>
+        </ul>
+        <p>
+          To exercise any of these rights, please contact us at <a href={`mailto:${email}`}>{email}</a>. We will respond to
+          all requests within 14 business days.
+        </p>
+
+        <h2>Shopify and third-party services</h2>
+        <p>
+          Our app is built on the Shopify platform. By using our app, your store data is also subject to <a
+            href="https://www.shopify.com/legal/privacy"
+            target="_blank"
+            rel="noopener">Shopify’s Privacy Policy</a
+          >. We encourage you to review it.
+        </p>
+        <p>Our app may use the following third-party services to operate:</p>
+        <ul>
+          <li>
+            <strong>Email delivery service:</strong> Used to send invoice emails to your customers on your behalf. Only the
+            customer’s name, email address, and invoice PDF are shared with this service.
+          </li>
+          <li>
+            <strong>Cloud hosting:</strong> Our infrastructure runs on reputable cloud providers. Data processed by these
+            providers is subject to their respective data processing agreements, which comply with applicable data
+            protection laws.
+          </li>
+          <li>
+            <strong>GST Portal API:</strong> The official government API used for GSTIN validation. Only GSTIN numbers are
+            transmitted.
+          </li>
+        </ul>
+        <p>
+          We do not integrate with any advertising networks, social media trackers, or analytics platforms that collect
+          your customers’ personal data.
+        </p>
+
+        <h2>Cookies and tracking</h2>
+        <p>
+          The GST Invoices India app itself does not use cookies to track your customers. The app operates within the
+          Shopify admin interface and does not add any tracking scripts to your storefront.
+        </p>
+        <p>
+          Our website (gstinvoicesindia.com) may use minimal, privacy-respecting analytics to understand page traffic.
+          These analytics do not identify individual users and do not track users across other websites. No third-party
+          advertising cookies are used. The free GST Calculator and GSTIN Checker run entirely in your browser; what you
+          type into them is not sent to us.
+        </p>
+
+        <h2>Children’s privacy</h2>
+        <p>
+          Our Services are intended for use by businesses and adults aged 18 and over. We do not knowingly collect
+          personal information from children under the age of 18. If you believe a minor has provided us with personal
+          data, please contact us immediately and we will delete it promptly.
+        </p>
+
+        <h2>Changes to this policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time to reflect changes in our practices, legal requirements, or
+          the features of our app. When we make material changes, we will notify you by:
+        </p>
+        <ul>
+          <li>Posting a notice in the GST Invoices India app dashboard</li>
+          <li>Sending an email to the address associated with your Shopify account</li>
+          <li>Updating the “Last updated” date at the top of this page</li>
+        </ul>
+        <p>
+          Continued use of our Services after changes become effective constitutes your acceptance of the revised policy.
+          We encourage you to review this page periodically.
+        </p>
+
+        <h2>Contact us</h2>
+        <p>
+          If you have any questions about this Privacy Policy, or if you wish to exercise any of your data rights, email
+          us at <a href={`mailto:${email}`}>{email}</a>. We take privacy seriously and aim to respond to all privacy
+          requests within 14 business days.
+        </p>
+        <p>Warp Studio · {site.company.location}</p>
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .meta {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+  .callout {
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    background: var(--lavender);
+    border: 1px solid var(--line);
+  }
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+</style>

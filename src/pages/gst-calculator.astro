@@ -1,0 +1,386 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import AppCta from '../components/AppCta.astro';
+import { calculateGst } from '../lib/gst';
+
+const rates = [3, 5, 12, 18, 28, 40];
+const defaults = { amount: 1000, rate: 18 };
+const initial = calculateGst(defaults.amount, defaults.rate, false, false);
+const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+---
+
+<Base
+  title="GST Calculator: Add or Remove GST with CGST, SGST & IGST Split | GST Invoices India"
+  description="Free GST calculator for India. Add GST to a price or remove it from a GST-inclusive amount, and see the CGST, SGST and IGST split instantly."
+>
+  <PageHero
+    eyebrow="Free tool"
+    title="GST Calculator"
+    lede="Add GST to a price, or remove it from a GST-inclusive amount, and see the CGST, SGST and IGST split instantly."
+  />
+
+  <section class="section tool-section">
+    <div class="container">
+      <form class="calc card" id="gst-calc" novalidate>
+        <div class="calc-inputs">
+          <div class="field">
+            <label for="amount">Amount</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input
+                class="input mono"
+                id="amount"
+                name="amount"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                value={defaults.amount}
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label" id="mode-label">This amount</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="mode-label">
+              <input type="radio" name="mode" id="mode-exclusive" value="exclusive" checked />
+              <label for="mode-exclusive">Excludes GST (add GST)</label>
+              <input type="radio" name="mode" id="mode-inclusive" value="inclusive" />
+              <label for="mode-inclusive">Includes GST (remove GST)</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label" id="rate-label">GST rate</span>
+            <div class="rate-options" role="radiogroup" aria-labelledby="rate-label">
+              <div class="segmented">
+                {
+                  rates.map((r) => (
+                    <>
+                      <input type="radio" name="rate" id={`rate-${r}`} value={r} checked={r === defaults.rate} />
+                      <label for={`rate-${r}`}>{r}%</label>
+                    </>
+                  ))
+                }
+                <input type="radio" name="rate" id="rate-custom" value="custom" />
+                <label for="rate-custom">Other</label>
+              </div>
+              <div class="custom-rate" hidden>
+                <input
+                  class="input mono"
+                  id="custom-rate"
+                  type="text"
+                  inputmode="decimal"
+                  placeholder="e.g. 0.25"
+                  aria-label="Custom GST rate in percent"
+                />
+                <span>%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label" id="supply-label">Where is the customer?</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="supply-label">
+              <input type="radio" name="supply" id="supply-intra" value="intra" checked />
+              <label for="supply-intra">Same state (CGST + SGST)</label>
+              <input type="radio" name="supply" id="supply-inter" value="inter" />
+              <label for="supply-inter">Other state (IGST)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-result" data-supply="intra" aria-live="polite">
+          <dl>
+            <div><dt>Taxable value</dt><dd data-out="taxable">{inr.format(initial.taxable)}</dd></div>
+            <div class="intra-only">
+              <dt>CGST <span data-out="half-rate">({defaults.rate / 2}%)</span></dt><dd data-out="cgst">{inr.format(initial.cgst)}</dd>
+            </div>
+            <div class="intra-only">
+              <dt>SGST <span data-out="half-rate">({defaults.rate / 2}%)</span></dt><dd data-out="sgst">{inr.format(initial.sgst)}</dd>
+            </div>
+            <div class="inter-only">
+              <dt>IGST <span data-out="full-rate">({defaults.rate}%)</span></dt><dd data-out="igst">{inr.format(initial.igst)}</dd>
+            </div>
+            <div class="total-gst"><dt>Total GST</dt><dd data-out="gst">{inr.format(initial.gst)}</dd></div>
+            <div class="grand"><dt>Total amount</dt><dd data-out="total">{inr.format(initial.total)}</dd></div>
+          </dl>
+          <p class="calc-error" data-out="error" hidden></p>
+        </div>
+      </form>
+
+      <div class="explain">
+        <div class="explain-grid">
+          <article class="card">
+            <h2>Adding GST to a price</h2>
+            <p>Use this when your price does not include tax yet.</p>
+            <p class="formula mono">GST = Amount × Rate ÷ 100<br />Total = Amount + GST</p>
+            <p class="example">₹1,000 at 18% → GST ₹180, total ₹1,180.</p>
+          </article>
+          <article class="card">
+            <h2>Removing GST from a price</h2>
+            <p>Use this when your selling price already includes GST, as it does on most Shopify stores in India.</p>
+            <p class="formula mono">Taxable value = Amount × 100 ÷ (100 + Rate)<br />GST = Amount − Taxable value</p>
+            <p class="example">₹2,531.25 at 5% → taxable value ₹2,410.71, GST ₹120.54.</p>
+          </article>
+          <article class="card">
+            <h2>CGST, SGST or IGST?</h2>
+            <p>
+              When you sell to a customer <strong>in your own state</strong>, the GST is split equally into CGST
+              (central) and SGST (state). When you sell to a customer <strong>in another state</strong>, the full GST is
+              charged as IGST.
+            </p>
+            <p class="example">18% within Maharashtra → 9% CGST + 9% SGST. 18% from Maharashtra to Karnataka → 18% IGST.</p>
+          </article>
+        </div>
+        <p class="disclaimer">
+          This calculator rounds each tax to the nearest paisa. It’s for quick estimates. Check rates for your specific
+          goods with your CA.
+        </p>
+      </div>
+
+      <AppCta
+        title="Tired of doing GST maths by hand?"
+        text="GST Invoices India calculates CGST, SGST and IGST on every Shopify order automatically, then sends your customer a GST-compliant invoice."
+        placement="gst-calculator"
+      />
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { calculateGst } from '../lib/gst';
+
+  const form = document.getElementById('gst-calc') as HTMLFormElement;
+  const amountInput = form.querySelector<HTMLInputElement>('#amount')!;
+  const customWrap = form.querySelector<HTMLElement>('.custom-rate')!;
+  const customInput = form.querySelector<HTMLInputElement>('#custom-rate')!;
+  const result = form.querySelector<HTMLElement>('.calc-result')!;
+  const errorEl = form.querySelector<HTMLElement>('[data-out="error"]')!;
+  const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+  const pct = (n: number) => `(${Number(n.toFixed(3))}%)`;
+
+  const out = (key: string) => form.querySelectorAll<HTMLElement>(`[data-out="${key}"]`);
+  const set = (key: string, text: string) => out(key).forEach((el) => (el.textContent = text));
+  const parse = (s: string) => (s.trim() === '' ? NaN : Number(s.replace(/[,\s₹%]/g, '')));
+
+  function update() {
+    const data = new FormData(form);
+    const inclusive = data.get('mode') === 'inclusive';
+    const interState = data.get('supply') === 'inter';
+    const rateChoice = String(data.get('rate'));
+    customWrap.hidden = rateChoice !== 'custom';
+    const rate = rateChoice === 'custom' ? parse(customInput.value) : Number(rateChoice);
+    const amount = parse(amountInput.value);
+
+    result.dataset.supply = interState ? 'inter' : 'intra';
+
+    let error = '';
+    if (!Number.isFinite(amount) || amount < 0) error = 'Enter an amount, like 1000 or 2,531.25.';
+    else if (!Number.isFinite(rate) || rate < 0 || rate > 100) error = 'Enter a GST rate between 0 and 100.';
+
+    errorEl.hidden = !error;
+    errorEl.textContent = error;
+    result.classList.toggle('is-empty', Boolean(error));
+    if (error) return;
+
+    const r = calculateGst(amount, rate, inclusive, interState);
+    set('taxable', inr.format(r.taxable));
+    set('cgst', inr.format(r.cgst));
+    set('sgst', inr.format(r.sgst));
+    set('igst', inr.format(r.igst));
+    set('gst', inr.format(r.gst));
+    set('total', inr.format(r.total));
+    set('half-rate', pct(rate / 2));
+    set('full-rate', pct(rate));
+  }
+
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  form.addEventListener('submit', (e) => e.preventDefault());
+  customInput.addEventListener('focus', () => {
+    form.querySelector<HTMLInputElement>('#rate-custom')!.checked = true;
+    update();
+  });
+  form.querySelector<HTMLInputElement>('#rate-custom')!.addEventListener('change', () => customInput.focus());
+  update();
+</script>
+
+<style>
+  .tool-section {
+    padding-top: clamp(40px, 5vw, 64px);
+  }
+
+  .calc {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .calc-inputs {
+    display: grid;
+    gap: 26px;
+    padding: clamp(24px, 4vw, 40px);
+  }
+
+  .rate-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .custom-rate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .custom-rate .input {
+    width: 120px;
+    font-size: 1rem;
+    padding: 0.55em 0.8em;
+  }
+
+  .calc-result {
+    background: var(--lavender);
+    border-left: 1px solid var(--line);
+    padding: clamp(24px, 4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .calc-result dl {
+    margin: 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  .calc-result dl > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .calc-result dt {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .calc-result dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 1.0625rem;
+  }
+
+  .calc-result[data-supply='intra'] .inter-only,
+  .calc-result[data-supply='inter'] .intra-only {
+    display: none;
+  }
+
+  .calc-result .total-gst {
+    padding-top: 14px;
+    border-top: 1px dashed #cfcbe3;
+  }
+
+  .calc-result .total-gst dd {
+    color: var(--violet);
+    font-weight: 700;
+  }
+
+  .calc-result .grand {
+    margin-top: 6px;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    align-items: center;
+  }
+
+  .calc-result .grand dt {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .calc-result .grand dd {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .calc-result.is-empty dl {
+    opacity: 0.35;
+  }
+
+  .calc-error {
+    margin-top: 16px;
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .calc {
+      grid-template-columns: 1fr;
+    }
+    .calc-result {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  .explain {
+    margin-block: clamp(48px, 7vw, 80px);
+  }
+
+  .explain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .explain article {
+    padding: 28px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+
+  .explain h2 {
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+  }
+
+  .formula {
+    font-size: 0.875rem;
+    color: var(--ink);
+    background: var(--lavender);
+    border-radius: 10px;
+    padding: 12px 14px;
+    line-height: 1.7;
+  }
+
+  .example {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .disclaimer {
+    margin-top: 20px;
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  @media (max-width: 960px) {
+    .explain-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

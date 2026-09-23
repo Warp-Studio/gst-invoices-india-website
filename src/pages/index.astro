@@ -1,0 +1,1170 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Stars from '../components/Stars.astro';
+import InvoiceMock from '../components/InvoiceMock.astro';
+import { site, plans, reviews, installUrl } from '../data/site';
+
+import imgCompliance from '../assets/features/gst-compliance.png';
+import imgAutoSend from '../assets/features/auto-send.png';
+import imgReports from '../assets/features/reports.png';
+import imgNumbering from '../assets/features/numbering.png';
+import imgBranding from '../assets/features/branding.png';
+import imgSupport from '../assets/features/support.png';
+
+const features = [
+  {
+    id: 'gst-compliance',
+    eyebrow: 'GST compliance',
+    accent: 'Simplify',
+    title: 'your GST compliance',
+    lede: 'Flexible enough for every Indian GST rule.',
+    bullets: [
+      'Apply <strong>HSN codes and GST rates</strong> to a product, or to specific variants',
+      'Set <strong>default GST rates on collections</strong> so new products inherit them automatically',
+      'Auto-apply the right tax, <strong>CGST + SGST or IGST</strong>, based on the customer’s location',
+      'Add <strong>conditional rules</strong>, like 5% GST on apparel and footwear under ₹2,500',
+    ],
+    image: imgCompliance,
+    alt: 'Products screen in GST Invoices India showing HSN codes and GST rates for items like a silk saree, leather juttis and a cotton kurta',
+  },
+  {
+    id: 'auto-send',
+    eyebrow: 'Invoice delivery',
+    accent: 'Auto-send',
+    title: 'invoices on email & WhatsApp',
+    lede: 'Delivered under your own brand, on whatever order event you choose.',
+    bullets: [
+      '<strong>Trigger on any event</strong>: order placed, paid, confirmed or fulfilled',
+      'Sent from <strong>your own email and WhatsApp Business number</strong>, so every invoice looks like it’s from you',
+      '<strong>Download and print</strong> any invoice as a PDF, whenever you need it',
+    ],
+    image: imgAutoSend,
+    alt: 'A WhatsApp chat where Lotus Footwear Co. automatically sends invoice INV-1526.pdf to a customer after the order is marked paid',
+  },
+  {
+    id: 'reports',
+    eyebrow: 'Reports & exports',
+    accent: 'GST reports',
+    title: '& invoice exports',
+    lede: 'Everything you need for tax filing and accounting.',
+    bullets: [
+      '<strong>GSTR-1 reports</strong>, plus a full report and summary your CA will love',
+      'Export invoices to <strong>Zoho Books</strong>, or as <strong>Excel / CSV</strong> for any date range',
+      'Cut <strong>manual reconciliation</strong> and filing errors',
+    ],
+    image: imgReports,
+    alt: 'Generate GST reports screen with GSTR-1, GSTR-1 full report and summary, Zoho invoice import and Excel/CSV export',
+  },
+  {
+    id: 'numbering',
+    eyebrow: 'Invoice numbering',
+    accent: 'Custom',
+    title: 'invoice numbering',
+    lede: 'Generate invoice numbers as per government guidelines.',
+    bullets: [
+      'Set <strong>unique formats for each financial year</strong>',
+      'Add custom <strong>prefixes and suffixes</strong> and define your series',
+      'Reuse your <strong>order numbers</strong> or start a fresh sequence',
+      'Stay aligned with <strong>GST numbering rules</strong>, automatically',
+    ],
+    image: imgNumbering,
+    alt: 'Invoice numbering settings with a separate prefix, starting number and suffix for financial years 2024-25, 2025-26 and 2026-27',
+  },
+  {
+    id: 'branding',
+    eyebrow: 'Templates',
+    accent: 'Let your branding',
+    title: 'shine',
+    lede: 'Impress customers with professional-grade invoices.',
+    bullets: [
+      'Choose from <strong>multiple polished templates</strong>, ready to send',
+      '<strong>No-code editor</strong> with a real-time live preview',
+      'Control <strong>every detail</strong>: logo, colors, fonts, fields and layout',
+    ],
+    image: imgBranding,
+    alt: 'Template editor with a live preview of a tax invoice for Green Bud Studio in Dharamshala',
+  },
+  {
+    id: 'support',
+    eyebrow: 'Support',
+    accent: 'Real support,',
+    title: 'from the person who built it',
+    lede: 'No ticket queues, no tiers, no bots. Your message goes straight to Arihant, the founder and developer of the app.',
+    bullets: [
+      '<strong>Answered by the developer</strong> who wrote the GST logic',
+      'Reach us on <strong>email or WhatsApp</strong>, usually a reply within 2 hours',
+      '<strong>Free video call</strong>, any day: screen-share your store and we’ll fix it together',
+    ],
+    image: imgSupport,
+    alt: 'Support conversation where the founder answers a merchant’s GSTR-1 question about export invoices under LUT',
+  },
+];
+
+const extras = [
+  { icon: 'undo', title: 'Credit notes', text: 'For refunds and returns, including partial refunds.' },
+  { icon: 'building', title: 'B2B invoices', text: 'Show your customer’s GSTIN so they can claim input tax credit.' },
+  { icon: 'tag', title: 'Discounts done right', text: 'Item-wise discount allocation keeps every taxable value correct.' },
+  { icon: 'receipt', title: 'More than invoices', text: 'Receipts and order confirmations from the same templates.' },
+  { icon: 'download', title: 'Download & print', text: 'Grab any invoice as a PDF straight from your Shopify admin.' },
+  { icon: 'store', title: 'Built for Shopify', text: 'Meets Shopify’s highest standards for performance, design and integration.' },
+] as const;
+
+const steps = [
+  { title: 'Install from the Shopify App Store', text: 'One click. The Free plan costs nothing until you choose to upgrade.' },
+  { title: 'Add your business details', text: 'Enter your GSTIN, business name and address, and upload your logo.' },
+  { title: 'Set HSN codes and GST rates', text: 'Per product, per variant or per collection, with conditional rules where you need them.' },
+  { title: 'Invoices go out automatically', text: 'Every order gets a compliant GST invoice, sent to your customer and saved for filing.' },
+];
+
+const faqs = [
+  {
+    q: 'Is GST Invoices India free to use?',
+    a: `Yes. The Free plan covers up to 50 orders a month and includes automatic invoice emails, customizable templates and custom invoice numbering. Paid plans start at $${plans[1].monthly}/month and come with a 7-day free trial.`,
+  },
+  {
+    q: 'Does it calculate CGST, SGST and IGST automatically?',
+    a: 'Yes. The app compares your business’s state with the customer’s place of supply. Intra-state orders are split into CGST + SGST, and inter-state orders get IGST.',
+  },
+  {
+    q: 'Can I set different GST rates for different products?',
+    a: 'Yes. Set HSN/SAC codes and GST rates per product or per variant, set defaults on collections so new products inherit them, and add conditional rules such as a lower rate for apparel and footwear under ₹2,500.',
+  },
+  {
+    q: 'How do my customers receive their invoices?',
+    a: 'Invoices are sent automatically by email, and can also go out on WhatsApp from your own WhatsApp Business number. You pick the trigger: order placed, paid, confirmed or fulfilled. You can also download and print any invoice as a PDF.',
+  },
+  {
+    q: 'Can it generate GSTR-1 reports?',
+    a: 'Yes. Download GSTR-1 reports, or a full GSTR-1 report with a summary, for any period. You can also export invoices to Zoho Books, Excel or CSV for your accountant.',
+  },
+  {
+    q: 'Does it handle refunds and returns?',
+    a: 'Yes. The app generates credit notes for refunds and returns, including partial refunds, with discounts allocated item by item.',
+  },
+  {
+    q: 'Can I customize the invoice design and numbering?',
+    a: 'Yes. Pick a template and adjust your logo, colors, fonts, fields and layout in a no-code editor with a live preview. Invoice numbers can follow your order numbers or a custom series with its own prefix and suffix for each financial year.',
+  },
+  {
+    q: 'Is my store’s data safe?',
+    a: 'The app only uses the data it needs to create your invoices. We never sell it or share it with advertisers, and your store’s data is deleted within 30 days of uninstalling. <a href="/privacy/">Read the privacy policy</a>.',
+  },
+  {
+    q: 'How do I get help?',
+    a: `Email <a href="mailto:${site.email}">${site.email}</a> and Arihant, the founder and developer, will reply directly, usually within a couple of hours. You can also ask for a free video call to go through your setup together.`,
+  },
+];
+
+const featured = reviews.filter((r) => r.featured);
+const more = reviews.filter((r) => !r.featured);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: site.name,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Shopify',
+  url: site.url,
+  image: `${site.url}/og-image.png`,
+  description: site.description,
+  installUrl: site.appStoreUrl,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: site.rating.value.toFixed(1),
+    reviewCount: site.rating.count,
+    bestRating: 5,
+  },
+  publisher: { '@type': 'Organization', name: site.company.name, url: site.company.url },
+};
+
+const money = (n: number) => (Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`);
+---
+
+<Base
+  title="GST Invoices India: Automatic GST Invoices for Shopify Stores"
+  description={site.description}
+  jsonLd={jsonLd}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="hero-pills">
+          <span class="pill"><span class="flag" aria-hidden="true"><span></span><span></span><span></span></span> Built for India</span>
+          <span class="pill"><Icon name="badge" size={16} class="accent" /> Built for Shopify</span>
+        </div>
+        <h1><span class="accent">Flawless</span> GST invoices, every single time.</h1>
+        <p class="lede">
+          The Shopify app that creates a GST-compliant invoice for every order and sends it to your customer on
+          email or WhatsApp. HSN codes, CGST/SGST/IGST, credit notes and GSTR-1 reports, all handled.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href={installUrl('hero')} target="_blank" rel="noopener">
+            Install free on Shopify <Icon name="arrow" />
+          </a>
+          <a class="btn btn-secondary" href="#pricing">See pricing</a>
+        </div>
+        <a class="hero-proof" href={site.reviewsUrl} target="_blank" rel="noopener">
+          <Stars size="1.05rem" />
+          <span><strong>{site.rating.value.toFixed(1)}</strong> from {site.rating.count} reviews on the Shopify App Store</span>
+        </a>
+      </div>
+      <div class="hero-visual">
+        <InvoiceMock />
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <section class="trust" aria-label="Highlights">
+    <div class="container">
+      <ul class="trust-grid">
+        <li>
+          <span class="trust-icon"><Icon name="badge" size={22} /></span>
+          <div><strong>Built for Shopify</strong><span>Shopify’s top quality standard</span></div>
+        </li>
+        <li>
+          <span class="trust-icon"><Icon name="checkCircle" size={22} /></span>
+          <div><strong>5.0 / 5 rating</strong><span>Every one of {site.rating.count} reviews is 5 stars</span></div>
+        </li>
+        <li>
+          <span class="trust-icon"><Icon name="zap" size={22} /></span>
+          <div><strong>Free plan</strong><span>Up to 50 orders every month</span></div>
+        </li>
+        <li>
+          <span class="trust-icon"><Icon name="chat" size={22} /></span>
+          <div><strong>Founder-led support</strong><span>Usually replies within 2 hours</span></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Everything you need</span>
+        <h2>Built for how Indian Shopify stores actually work</h2>
+        <p class="lede">From HSN codes to GSTR-1, every feature is designed around Indian GST, not bolted on as an afterthought.</p>
+      </div>
+
+      <div class="feature-list">
+        {
+          features.map((f, i) => (
+            <article class="feature" id={f.id}>
+              <div class="feature-copy">
+                <span class="eyebrow">{f.eyebrow}</span>
+                <h3>
+                  <span class="accent">{f.accent}</span> {f.title}
+                </h3>
+                <p class="lede">{f.lede}</p>
+                <ul class="checklist">
+                  {f.bullets.map((b) => (
+                    <li set:html={b} />
+                  ))}
+                </ul>
+              </div>
+              <div class="feature-media">
+                <Image
+                  src={f.image}
+                  alt={f.alt}
+                  widths={[420, f.image.width]}
+                  sizes="(max-width: 900px) calc(100vw - 32px), 580px"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="extras">
+        <h3 class="extras-title">Also included</h3>
+        <ul class="extras-grid">
+          {
+            extras.map((e) => (
+              <li class="card">
+                <span class="extra-icon">
+                  <Icon name={e.icon} size={20} />
+                </span>
+                <div>
+                  <strong>{e.title}</strong>
+                  <p>{e.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section section-tint" id="how-it-works">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">How it works</span>
+        <h2>Install once. Invoice forever.</h2>
+        <p class="lede">From the Shopify App Store to your first compliant invoice in a few minutes.</p>
+      </div>
+      <ol class="steps">
+        {
+          steps.map((s, i) => (
+            <li class="card">
+              <span class="step-num mono">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Pricing</span>
+        <h2>Simple, honest pricing</h2>
+        <p class="lede">Start free. Upgrade as your order volume grows. Every paid plan starts with a 7-day free trial.</p>
+      </div>
+
+      <div class="billing-toggle">
+        <div class="segmented" role="radiogroup" aria-label="Billing period">
+          <input type="radio" name="billing" id="billing-monthly" value="monthly" checked />
+          <label for="billing-monthly">Monthly</label>
+          <input type="radio" name="billing" id="billing-yearly" value="yearly" />
+          <label for="billing-yearly">Yearly <span class="save-tag">save up to 33%</span></label>
+        </div>
+      </div>
+
+      <div class="plans" data-billing="monthly">
+        {
+          plans.map((p) => (
+            <article class:list={['plan card', { 'plan-highlight': p.highlight }]}>
+              {p.highlight && <span class="plan-badge">Most popular</span>}
+              <h3 class="plan-name">{p.name}</h3>
+              <p class="plan-blurb">{p.blurb}</p>
+              <div class="plan-price">
+                {p.monthly === 0 ? (
+                  <span class="price-free">
+                    <span class="amount">$0</span>
+                    <span class="period">free forever</span>
+                  </span>
+                ) : (
+                  <>
+                    <span class="price-monthly">
+                      <span class="amount">{money(p.monthly)}</span>
+                      <span class="period">/ month</span>
+                    </span>
+                    <span class="price-yearly">
+                      <span class="amount">{money(p.yearly!)}</span>
+                      <span class="period">/ year</span>
+                      <span class="saving">{p.yearlySaving}</span>
+                    </span>
+                  </>
+                )}
+              </div>
+              <p class="plan-orders">{p.orders}</p>
+              <ul class="checklist plan-features">
+                {p.features.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <a
+                class:list={['btn', p.highlight ? 'btn-primary' : 'btn-secondary']}
+                href={installUrl(`pricing-${p.name.toLowerCase()}`)}
+                target="_blank"
+                rel="noopener"
+              >
+                {p.monthly === 0 ? 'Install free' : 'Start 7-day free trial'}
+              </a>
+            </article>
+          ))
+        }
+      </div>
+      <p class="pricing-note">
+        Prices are in USD and billed through your regular Shopify invoice. Need something custom? <a
+          href={`mailto:${site.email}`}>Talk to us</a
+        >.
+      </p>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="section section-tint" id="reviews">
+    <div class="container">
+      <div class="reviews-head">
+        <div>
+          <span class="eyebrow">Merchant stories</span>
+          <h2>Loved by Indian Shopify merchants</h2>
+        </div>
+        <a class="rating-card card" href={site.reviewsUrl} target="_blank" rel="noopener">
+          <span class="rating-big">{site.rating.value.toFixed(1)}</span>
+          <span class="rating-meta">
+            <Stars size="1.1rem" />
+            <span>{site.rating.count} reviews on the Shopify App Store</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="reviews-featured">
+        {
+          featured.map((r) => (
+            <figure class="review card">
+              <Stars />
+              <blockquote>“{r.text}”</blockquote>
+              <figcaption>
+                <strong>{r.store}</strong>
+                <span>{r.usage}</span>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <div class="reviews-more">
+        {
+          more.map((r) => (
+            <figure class="review card">
+              <Stars />
+              <blockquote>“{r.text}”</blockquote>
+              <figcaption>
+                <strong>{r.store}</strong>
+                <span>{r.usage}</span>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <p class="reviews-cta">
+        <a class="btn btn-secondary" href={site.reviewsUrl} target="_blank" rel="noopener">
+          Read all {site.rating.count} reviews on Shopify <Icon name="external" size={16} />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container faq-grid">
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Questions, answered</h2>
+        <p class="lede">
+          Can’t find what you’re looking for? Email <a href={`mailto:${site.email}`}>{site.email}</a> and you’ll hear back from the founder.
+        </p>
+      </div>
+      <div class="faq-list">
+        {
+          faqs.map((f) => (
+            <details class="faq">
+              <summary>
+                {f.q}
+                <Icon name="plus" size={20} class="faq-icon" />
+              </summary>
+              <p set:html={f.a} />
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-bars" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h2>Start issuing GST invoices today.</h2>
+        <p>Free for up to 50 orders a month. Set up in minutes, with the founder on hand if you get stuck.</p>
+        <div class="cta-actions">
+          <a class="btn btn-light" href={installUrl('final-cta')} target="_blank" rel="noopener">
+            Install free on Shopify <Icon name="arrow" />
+          </a>
+          <a class="btn btn-ghost-light" href={`mailto:${site.email}`}>Talk to the founder</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const plansEl = document.querySelector<HTMLElement>('.plans');
+  document.querySelectorAll<HTMLInputElement>('input[name="billing"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      if (plansEl && input.checked) plansEl.dataset.billing = input.value;
+    });
+  });
+</script>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(1000px 500px at 85% 10%, rgb(91 79 230 / 0.12), transparent 60%),
+      radial-gradient(700px 400px at 0% 100%, rgb(255 153 51 / 0.08), transparent 60%),
+      var(--lavender);
+    padding-block: clamp(48px, 7vw, 96px) clamp(56px, 8vw, 104px);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: clamp(40px, 6vw, 80px);
+    align-items: center;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .hero-copy .lede {
+    max-width: 560px;
+    margin-top: 24px;
+  }
+
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .hero-proof {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    text-decoration: none;
+  }
+
+  .hero-proof strong {
+    color: var(--ink);
+  }
+
+  .hero-proof:hover span {
+    color: var(--ink);
+  }
+
+  .hero-visual {
+    max-width: 520px;
+    width: 100%;
+    justify-self: end;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-visual {
+      justify-self: center;
+    }
+  }
+
+  /* Trust strip */
+  .trust {
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .trust-grid {
+    list-style: none;
+    margin: 0;
+    padding: 28px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .trust-grid li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .trust-grid div {
+    display: grid;
+    line-height: 1.35;
+  }
+
+  .trust-grid strong {
+    color: var(--ink);
+  }
+
+  .trust-grid div span {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .trust-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 12px;
+    background: var(--violet-soft);
+    color: var(--violet);
+  }
+
+  @media (max-width: 960px) {
+    .trust-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .trust-grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+  }
+
+  /* Features */
+  .feature-list {
+    display: grid;
+    gap: clamp(72px, 10vw, 128px);
+  }
+
+  .feature {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+    scroll-margin-top: 100px;
+  }
+
+  .feature:nth-child(even) .feature-copy {
+    order: 2;
+  }
+
+  .feature-copy .lede {
+    margin-top: 12px;
+    margin-bottom: 28px;
+  }
+
+  .feature-copy h3 {
+    font-size: clamp(1.875rem, 3.2vw, 2.625rem);
+    letter-spacing: -0.03em;
+  }
+
+  .feature-media {
+    border-radius: var(--radius-lg);
+    background: var(--lavender);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .feature-media img {
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .feature {
+      grid-template-columns: 1fr;
+    }
+    .feature:nth-child(even) .feature-copy {
+      order: 0;
+    }
+  }
+
+  .extras {
+    margin-top: clamp(80px, 10vw, 128px);
+  }
+
+  .extras-title {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .extras-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .extras-grid li {
+    display: flex;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .extras-grid strong {
+    color: var(--ink);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .extras-grid p {
+    font-size: 0.9375rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .extra-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 10px;
+    background: var(--violet-soft);
+    color: var(--violet);
+  }
+
+  @media (max-width: 900px) {
+    .extras-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .extras-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Steps */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .steps li {
+    padding: 28px 24px;
+    position: relative;
+  }
+
+  .step-num {
+    display: inline-block;
+    font-weight: 700;
+    color: var(--violet);
+    background: var(--violet-soft);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 20px;
+  }
+
+  .steps h3 {
+    font-size: 1.1875rem;
+    letter-spacing: -0.015em;
+    margin-bottom: 8px;
+  }
+
+  .steps p {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  @media (max-width: 960px) {
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Pricing */
+  .billing-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .save-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--success);
+    background: var(--success-soft);
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-left: 4px;
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px;
+  }
+
+  .plan-highlight {
+    border: 2px solid var(--violet);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .plan-badge {
+    position: absolute;
+    top: -13px;
+    left: 24px;
+    background: var(--violet);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  .plan-name {
+    font-size: 1.125rem;
+    letter-spacing: 0;
+  }
+
+  .plan-blurb {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    margin-top: 6px;
+    min-height: 3em;
+  }
+
+  .plan-price {
+    margin-top: 20px;
+    min-height: 3.25rem;
+  }
+
+  .price-free,
+  .price-monthly,
+  .price-yearly {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .amount {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .period {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .saving {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--success);
+    background: var(--success-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .plans[data-billing='monthly'] .price-yearly,
+  .plans[data-billing='yearly'] .price-monthly {
+    display: none;
+  }
+
+  .plan-orders {
+    margin-top: 16px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--lavender);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+
+  .plan-features {
+    margin: 20px 0 28px;
+    font-size: 0.9375rem;
+    gap: 10px;
+  }
+
+  .plan .btn {
+    margin-top: auto;
+    width: 100%;
+  }
+
+  .pricing-note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    margin-top: 28px;
+  }
+
+  @media (max-width: 1080px) {
+    .plans {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 16px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .plans {
+      grid-template-columns: 1fr;
+    }
+    .plan-blurb {
+      min-height: 0;
+    }
+  }
+
+  /* Reviews */
+  .reviews-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .reviews-head h2 {
+    max-width: 560px;
+  }
+
+  .rating-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .rating-card:hover {
+    border-color: var(--violet);
+    color: var(--muted);
+  }
+
+  .rating-big {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .rating-meta {
+    display: grid;
+    gap: 4px;
+  }
+
+  .reviews-featured {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .reviews-featured blockquote {
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+
+  .reviews-more {
+    columns: 3 300px;
+    column-gap: 16px;
+  }
+
+  .reviews-more .review {
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+
+  .review {
+    margin: 0;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .review blockquote {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .review figcaption {
+    display: grid;
+    margin-top: auto;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .review figcaption strong {
+    color: var(--ink);
+    font-size: 0.9375rem;
+  }
+
+  .reviews-cta {
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 960px) {
+    .reviews-featured {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .reviews-more {
+      display: none;
+    }
+  }
+
+  /* FAQ */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+
+  .faq-grid .section-head {
+    margin-bottom: 0;
+    position: sticky;
+    top: 100px;
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .faq {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .faq summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 0;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq summary :global(.faq-icon) {
+    flex: none;
+    color: var(--violet);
+    transition: transform 0.2s ease;
+  }
+
+  .faq[open] summary :global(.faq-icon) {
+    transform: rotate(45deg);
+  }
+
+  .faq p {
+    padding-bottom: 22px;
+    padding-right: 36px;
+    color: var(--text);
+  }
+
+  @media (max-width: 900px) {
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+    .faq-grid .section-head {
+      position: static;
+    }
+  }
+
+  /* Final CTA */
+  .cta {
+    padding-bottom: clamp(64px, 9vw, 120px);
+  }
+
+  .cta-box {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    color: #e4e1ff;
+    background:
+      radial-gradient(600px 300px at 90% 0%, rgb(255 255 255 / 0.16), transparent 60%),
+      linear-gradient(135deg, #5b4fe6, #4135c4);
+    border-radius: 32px;
+    padding: clamp(48px, 7vw, 88px) clamp(24px, 5vw, 64px);
+  }
+
+  .cta-bars {
+    display: grid;
+    gap: 8px;
+    width: 88px;
+    margin: 0 auto 28px;
+  }
+
+  .cta-bars span {
+    height: 8px;
+    border-radius: 99px;
+  }
+
+  .cta-bars span:nth-child(1) {
+    background: var(--saffron);
+  }
+  .cta-bars span:nth-child(2) {
+    background: #fff;
+  }
+  .cta-bars span:nth-child(3) {
+    background: #1fa30f;
+    width: 58%;
+  }
+
+  .cta-box h2 {
+    color: #fff;
+  }
+
+  .cta-box p {
+    max-width: 520px;
+    margin: 16px auto 0;
+    font-size: 1.125rem;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+</style>

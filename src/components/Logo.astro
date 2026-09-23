@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+
+interface Props {
+  size?: number;
+}
+const { size = 36 } = Astro.props;
+---
+
+<span class="logo">
+  <Image src={logo} alt="" width={size} height={size} densities={[1, 2]} loading="eager" />
+  <span class="logo-text">GST Invoices <span class="accent">India</span></span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.0625rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .logo img {
+    border-radius: 9px;
+  }
+</style>

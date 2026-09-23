@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gstinvoicesindia.com/sitemap-index.xml
